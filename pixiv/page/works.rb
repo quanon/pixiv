@@ -42,8 +42,6 @@ module Pixiv
 
       private
 
-      private
-
       def query
         {
           id: @member_id,
