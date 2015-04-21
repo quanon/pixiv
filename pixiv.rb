@@ -10,10 +10,12 @@ require './pixiv/client'
 =begin
 
 require './pixiv'
+
 client = Pixiv::Client.new
 client.login
-client.illust_ids(575769)
-client.download(49548341) # イラスト
-client.download(49777899) # 漫画
+
+client.download(illust_id) # イラスト
+client.download(illust_id) # 漫画
+client.download_all(member_id) # 一括ダウンロード
 
 =end

@@ -1,4 +1,5 @@
 require 'mechanize'
+require 'ruby-progressbar'
 
 module Pixiv
   class Client # Pixiv::Client
@@ -55,6 +56,26 @@ module Pixiv
       else
         Downloader.downlaod(medium_page)
       end
+    end
+
+    def download_all(member_id)
+      ids = illust_ids(member_id)
+      progressbar = create_progressbar("[member_id: #{member_id}]", ids.length)
+
+      ids.map do |illust_id|
+        download(illust_id).tap do
+          sleep(DELAY)
+          progressbar.increment
+        end
+      end.flatten.compact
+    end
+
+    def create_progressbar(title, total)
+      ProgressBar.create(
+        title: title,
+        total: total,
+        format: '%t: %c/%C |%w>%i| %e '
+      )
     end
   end
 end
