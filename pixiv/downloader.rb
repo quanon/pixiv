@@ -50,12 +50,17 @@ module Pixiv
     end
 
     def filename
-      @filename ||=
-        if @page.manga?
-          "#{@page.page_number}#{extname}"
-        else
-          "#{@page.illust_id} #{@page.title}#{extname}"
-        end
+      @filename ||= begin
+        filename =
+          if @page.manga?
+            "#{@page.page_number}#{extname}"
+          else
+            "#{@page.illust_id} #{@page.title}#{extname}"
+          end
+        filename.gsub!('/', '／')
+        filename.gsub!(':', '：')
+        filename
+      end
     end
 
     def extname
