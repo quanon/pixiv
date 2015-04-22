@@ -2,6 +2,8 @@ module Pixiv
   class Downloader # Pixiv::Downloader
     DOWNLOAD_DIR = ENV['PIXIV_DOWNLOAD_DIR'] || '/tmp'
 
+    class NoDownloadUrlError < StandardError; end
+
     def self.downlaod(page)
       new(page).downlaod
     end
@@ -12,6 +14,8 @@ module Pixiv
     end
 
     def downlaod
+      fail(NoDownloadUrlError, "[#{@page.illust_id}] downlaod url is null") if download_url.nil?
+
       return nil if FileTest.exist?(filepath)
       FileUtils.mkdir_p(downlaod_dir)
       @client.agent.download(download_url, filepath, [], referer)

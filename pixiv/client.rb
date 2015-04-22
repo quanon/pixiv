@@ -62,12 +62,22 @@ module Pixiv
       ids = illust_ids(member_id)
       progressbar = create_progressbar("[member_id: #{member_id}]", ids.length)
 
-      ids.map do |illust_id|
-        download(illust_id).tap do
+      success = []
+      failure = []
+
+      ids.each do |illust_id|
+        begin
+          download(illust_id)
           sleep(DELAY)
+          success << illust_id
+        rescue Downloader::NoDownloadUrlError => e
+          failure << illust_id
+        ensure
           progressbar.increment
         end
-      end.flatten.compact
+      end
+
+      { success: success, failure: failure }
     end
 
     def create_progressbar(title, total)
