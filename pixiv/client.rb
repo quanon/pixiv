@@ -5,7 +5,7 @@ module Pixiv
   class Client # Pixiv::Client
     TOP_URL = 'http://www.pixiv.net/index.php'.freeze
     LOGIN_URL = 'https://www.secure.pixiv.net/login.php'.freeze
-    DELAY = 1
+    INTERVAL = 1
 
     def initialize(id = nil, password = nil)
       @id = id || ENV['PIXIV_ID']
@@ -41,7 +41,7 @@ module Pixiv
           break ids if page.empty?
           ids += page.illust_ids
           break ids if page.next.nil?
-          ids.tap { sleep(DELAY) }
+          ids.tap { sleep(INTERVAL) }
         end.sort
       end
     end
@@ -51,7 +51,7 @@ module Pixiv
 
       if medium_page.manga?
         medium_page.to_manga.big_pages.map do |manga_big_page|
-          Downloader.downlaod(manga_big_page).tap { sleep(DELAY) }
+          Downloader.downlaod(manga_big_page).tap { sleep(INTERVAL) }
         end
       else
         Downloader.downlaod(medium_page)
@@ -68,7 +68,7 @@ module Pixiv
       ids.each do |illust_id|
         begin
           download(illust_id)
-          sleep(DELAY)
+          sleep(INTERVAL)
           success << illust_id
         rescue Downloader::NoDownloadUrlError => e
           failure << illust_id
