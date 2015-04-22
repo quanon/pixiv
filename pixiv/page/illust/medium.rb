@@ -13,13 +13,13 @@ module Pixiv
         # @return [String]
         def download_url
           @download_url ||=
-            mechanize_page.search('._illust_modal img.original-image').first['data-src']
+            mechanize_page.at('._illust_modal img.original-image').try(:attr, 'data-src')
         end
 
         # @return [Integer]
         def member_id
           @member_id ||= begin
-            href = mechanize_page.search('.user-link').first['href']
+            href = mechanize_page.at('.user-link').try(:attr, 'href')
             match_data = href.match(/id=(?<member_id>\d+)\z/)
             return nil if match_data.nil?
             match_data[:member_id].to_i
@@ -29,17 +29,17 @@ module Pixiv
         # @return [String]
         def member_name
           @member_name ||=
-            mechanize_page.search('.profile-unit .user').first.try(:text)
+            mechanize_page.at('.profile-unit .user').try(:text)
         end
 
         # @return [String]
         def title
           @title ||=
-            mechanize_page.search('.work-info .title').first.try(:text)
+            mechanize_page.at('.work-info .title').try(:text)
         end
 
         def manga?
-          mechanize_page.search('.multiple').present?
+          mechanize_page.at('.multiple').present?
         end
 
         def to_manga
@@ -50,7 +50,7 @@ module Pixiv
 
         def manga_page
           @manga_page ||= begin
-            return nil if mechanize_page.search('.multiple').nil?
+            return nil if mechanize_page.at('.multiple').nil?
 
             Manga.new(@client, @illust_id, self)
           end

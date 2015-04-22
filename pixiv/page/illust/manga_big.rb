@@ -15,7 +15,7 @@ module Pixiv
         end
 
         def download_url
-          @download_url ||= mechanize_page.search('img').first['src']
+          @download_url ||= mechanize_page.at('img').try(:attr, 'src')
         end
 
         def manga?

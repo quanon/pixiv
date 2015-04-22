@@ -22,7 +22,9 @@ module Pixiv
         def big_pages
           @big_pages ||= begin
             mechanize_page.search('a.full-size-container').map do |node|
-              query_string = URI.parse(node['href']).query
+              href = node.attr('href')
+              next nil if href.nil?
+              query_string = URI.parse(node.attr('href')).query
               query = URI::decode_www_form(query_string).to_h
               MangaBig.new(@client, @illust_id, query['page'], @medium_page)
             end
